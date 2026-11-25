@@ -1,0 +1,52 @@
+{
+  "system": "NETRAVA",
+  "scale": "International Clinical Diabetic Retinopathy (ICDR)",
+  "grades": [
+    {
+      "grade": 0,
+      "class_name": "No DR",
+      "severity": "None",
+      "description": "No microaneurysms, hemorrhages, or diabetic retinal lesions observed.",
+      "clinical_action": "Routine annual diabetic eye screening.",
+      "badge_color_hex": "#21A36D",
+      "badge_bg_hex": "#E6F4EE"
+    },
+    {
+      "grade": 1,
+      "class_name": "Mild",
+      "severity": "Mild NPDR",
+      "description": "Microaneurysms only. No venous beading or hard exudates.",
+      "clinical_action": "Follow-up screening within 9 to 12 months with glycemic control counseling.",
+      "badge_color_hex": "#E9A23B",
+      "badge_bg_hex": "#FEF6EB"
+    },
+    {
+      "grade": 2,
+      "class_name": "Moderate",
+      "severity": "Moderate NPDR",
+      "description": "More than microaneurysms but less than severe NPDR; dot/blot hemorrhages and hard exudates present.",
+      "clinical_action": "Ophthalmologist referral within 3 to 6 months.",
+      "badge_color_hex": "#E07A1F",
+      "badge_bg_hex": "#FEF0E0"
+    },
+    {
+      "grade": 3,
+      "class_name": "Severe",
+      "severity": "Severe NPDR",
+      "description": "Severe intraretinal hemorrhages in 4 quadrants, venous beading in 2+ quadrants, or prominent IRMA in 1+ quadrant.",
+      "clinical_action": "Urgent ophthalmologist referral within 2 to 4 weeks. High risk of progression.",
+      "badge_color_hex": "#D9534F",
+      "badge_bg_hex": "#FDEEEE"
+    },
+    {
+      "grade": 4,
+      "class_name": "Proliferative DR",
+      "severity": "PDR",
+      "description": "Neovascularization of the retina or disc (NVD/NVE), pre-retinal or vitreous hemorrhage.",
+      "clinical_action": "Immediate ophthalmologist referral within 24 to 48 hours for panretinal photocoagulation or anti-VEGF therapy.",
+      "badge_color_hex": "#BA1A1A",
+      "badge_bg_hex": "#FFDAD6"
+    }
+  ]
+}
+

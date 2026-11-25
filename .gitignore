@@ -1,0 +1,84 @@
+# NETRAVA Master Git Ignore Rules
+
+# Python & Virtual Environments
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyTorch & Machine Learning Checkpoints (Avoid committing multi-gigabyte binaries)
+*.pth
+*.pt
+*.onnx
+*.engine
+*.tflite
+!ai_model/checkpoint/.gitkeep
+!backend/model/.gitkeep
+
+# Environment variables & secrets (CRITICAL)
+.env
+.env.*
+!.env.example
+secrets/
+*.pem
+*.key
+
+# Supabase
+.supabase/
+supabase/.temp/
+
+# Flutter & Dart
+.dart_tool/
+.flutter-plugin
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+frontend/flutter_app/build/
+frontend/flutter_app/.dart_tool/
+frontend/flutter_app/.flutter-plugins
+frontend/flutter_app/.flutter-plugins-dependencies
+
+# IDEs & Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Large Medical Datasets & Temp Images
+aptos2019-blindness-detection/
+*.zip
+*.tar.gz
+*.mp4
+temp/
+scratch/
+node_modules/
+.venv/
+.pytest-*/
+tmp/
+.coverage
+.coverage.*
+
+# Generated Android APKs
+output/apk/

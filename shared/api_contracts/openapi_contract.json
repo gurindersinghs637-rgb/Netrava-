@@ -1,0 +1,1930 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "NETRAVA",
+    "description": "Explainable AI-Based Diabetic Retinopathy Screening System. See. Detect. Explain.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/v1/health": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Service health check",
+        "description": "Returns the operational status of the NETRAVA backend service, including model readiness and database connectivity. No authentication required.",
+        "operationId": "health_check_api_v1_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/signup": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Signup",
+        "description": "Register an active technician in an isolated private workspace.",
+        "operationId": "signup_api_v1_auth_signup_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignupRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignupResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Sign in to your workspace",
+        "description": "Authenticates a user with email and password via Supabase GoTrue. Returns a JWT access token and user profile. No auth required.",
+        "operationId": "login_api_v1_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Get current user profile",
+        "description": "Returns the profile of the currently authenticated user.",
+        "operationId": "get_me_api_v1_auth_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserProfile"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/auth/forgot-password": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Forgot Password",
+        "description": "Send a password recovery email without disclosing account existence.",
+        "operationId": "forgot_password_api_v1_auth_forgot_password_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForgotPasswordRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthMessage"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/reset-password": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Reset Password",
+        "description": "Update a password using a one-time Supabase recovery token.",
+        "operationId": "reset_password_api_v1_auth_reset_password_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthMessage"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/patients": {
+      "post": {
+        "tags": [
+          "Patients"
+        ],
+        "summary": "Register a new patient",
+        "description": "Creates a new diabetic patient record. Requires technician or ophthalmologist role.",
+        "operationId": "create_patient_api_v1_patients_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePatientRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePatientResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Patients"
+        ],
+        "summary": "List patients",
+        "description": "Paginated and searchable list of clinic patients.",
+        "operationId": "list_patients_api_v1_patients_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Search by patient name or patient code.",
+              "title": "Search"
+            },
+            "description": "Search by patient name or patient code."
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Page number (1-based).",
+              "default": 1,
+              "title": "Page"
+            },
+            "description": "Page number (1-based)."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Records per page (max 100).",
+              "default": 20,
+              "title": "Limit"
+            },
+            "description": "Records per page (max 100)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatientListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/patients/{patient_id}": {
+      "get": {
+        "tags": [
+          "Patients"
+        ],
+        "summary": "Get patient details",
+        "description": "Returns patient details only when the patient belongs to the authenticated user's clinic.",
+        "operationId": "get_patient_api_v1_patients__patient_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Patient Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatientDetailResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/screenings": {
+      "post": {
+        "tags": [
+          "Screening"
+        ],
+        "summary": "Upload retinal fundus image",
+        "description": "Accepts a retinal fundus image upload (JPEG/PNG, max 15 MB), runs image quality control, stores it in Supabase Storage, and returns a signed URL. Requires authentication.",
+        "operationId": "create_screening_api_v1_screenings_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_create_screening_api_v1_screenings_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateScreeningResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/screenings/{screening_id}/report": {
+      "post": {
+        "tags": [
+          "Screening"
+        ],
+        "summary": "Submit ophthalmologist review",
+        "description": "Save a clinical review and its audit event for the user's clinic.",
+        "operationId": "submit_report_api_v1_screenings__screening_id__report_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "screening_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Screening Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClinicalReportResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Screening"
+        ],
+        "summary": "Get screening report",
+        "description": "Return a report scoped to the authenticated user's clinic.",
+        "operationId": "read_report_api_v1_screenings__screening_id__report_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "screening_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Screening Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClinicalReportResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/screenings/{screening_id}/report/pdf": {
+      "get": {
+        "tags": [
+          "Screening"
+        ],
+        "summary": "Download clinical report PDF",
+        "description": "Download a PDF generated from the caller's persisted clinic report.",
+        "operationId": "download_report_pdf_api_v1_screenings__screening_id__report_pdf_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "screening_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Screening Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/pdf": {}
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/screenings/{screening_id}/ai-report/pdf": {
+      "get": {
+        "tags": [
+          "Screening"
+        ],
+        "summary": "Generate NETRAVA AI screening report",
+        "description": "Technician-accessible screening support PDF; no clinical privileges granted.",
+        "operationId": "download_ai_screening_pdf_api_v1_screenings__screening_id__ai_report_pdf_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "screening_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Screening Id"
+            }
+          },
+          {
+            "name": "prediction_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Prediction Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/pdf": {}
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/predict": {
+      "post": {
+        "tags": [
+          "AI Prediction"
+        ],
+        "summary": "Run AI inference on a retinal image",
+        "description": "Accepts a retinal image file directly, runs EfficientNet-B3 classification, generates Grad-CAM explainability heatmap, and returns the prediction with 5-class probabilities and a Grad-CAM overlay signed URL. Requires technician or ophthalmologist role.",
+        "operationId": "predict_api_v1_predict_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "retinal_image_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Retinal Image Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_predict_api_v1_predict_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PredictResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AuthMessage": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "AuthMessage",
+        "description": "Public authentication acknowledgement."
+      },
+      "Body_create_screening_api_v1_screenings_post": {
+        "properties": {
+          "patient_id": {
+            "type": "string",
+            "title": "Patient Id",
+            "description": "Patient UUID."
+          },
+          "eye": {
+            "type": "string",
+            "enum": [
+              "OD",
+              "OS"
+            ],
+            "title": "Eye",
+            "description": "Eye laterality: OD (right) or OS (left)."
+          },
+          "image": {
+            "type": "string",
+            "format": "binary",
+            "title": "Image",
+            "description": "Retinal fundus image (JPEG or PNG, max 15 MB)."
+          }
+        },
+        "type": "object",
+        "required": [
+          "patient_id",
+          "eye",
+          "image"
+        ],
+        "title": "Body_create_screening_api_v1_screenings_post"
+      },
+      "Body_predict_api_v1_predict_post": {
+        "properties": {
+          "image": {
+            "type": "string",
+            "format": "binary",
+            "title": "Image",
+            "description": "Retinal fundus image (JPEG or PNG)."
+          }
+        },
+        "type": "object",
+        "required": [
+          "image"
+        ],
+        "title": "Body_predict_api_v1_predict_post"
+      },
+      "ClassProbabilityResponse": {
+        "properties": {
+          "grade": {
+            "type": "integer",
+            "maximum": 4.0,
+            "minimum": 0.0,
+            "title": "Grade"
+          },
+          "class_name": {
+            "type": "string",
+            "title": "Class Name"
+          },
+          "probability": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Probability"
+          }
+        },
+        "type": "object",
+        "required": [
+          "grade",
+          "class_name",
+          "probability"
+        ],
+        "title": "ClassProbabilityResponse",
+        "description": "Per-class probability entry in a prediction response."
+      },
+      "ClinicalReportResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "screening_id": {
+            "type": "string",
+            "title": "Screening Id"
+          },
+          "prediction_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prediction Id"
+          },
+          "overall_grade": {
+            "type": "integer",
+            "maximum": 4.0,
+            "minimum": 0.0,
+            "title": "Overall Grade"
+          },
+          "grade_override": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 4.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Grade Override"
+          },
+          "ophthalmologist_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ophthalmologist Notes"
+          },
+          "is_urgent_referral": {
+            "type": "boolean",
+            "title": "Is Urgent Referral"
+          },
+          "is_signed_off": {
+            "type": "boolean",
+            "title": "Is Signed Off"
+          },
+          "signed_off_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Signed Off At"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "screening_id",
+          "overall_grade",
+          "is_urgent_referral",
+          "is_signed_off",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "ClinicalReportResponse",
+        "description": "Persisted ophthalmologist review for a screening."
+      },
+      "CreatePatientRequest": {
+        "properties": {
+          "mrn": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 3,
+            "title": "Mrn",
+            "description": "Medical Record Number \u2014 must be unique per clinic."
+          },
+          "full_name": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 2,
+            "title": "Full Name",
+            "description": "Patient full name."
+          },
+          "date_of_birth": {
+            "type": "string",
+            "format": "date",
+            "title": "Date Of Birth",
+            "description": "Date of birth (YYYY-MM-DD)."
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "male",
+              "female",
+              "other"
+            ],
+            "title": "Gender",
+            "description": "Biological sex."
+          },
+          "phone_number": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 20
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone Number",
+            "description": "Contact phone number."
+          },
+          "diabetes_type": {
+            "type": "string",
+            "enum": [
+              "type_1",
+              "type_2",
+              "gestational",
+              "other"
+            ],
+            "title": "Diabetes Type",
+            "description": "Type of diabetes mellitus."
+          },
+          "diabetes_duration_years": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 100.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Diabetes Duration Years",
+            "description": "Years since diabetes diagnosis."
+          },
+          "latest_hba1c": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 20.0,
+                "minimum": 3.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latest Hba1C",
+            "description": "Most recent HbA1c percentage."
+          },
+          "is_insulin_dependent": {
+            "type": "boolean",
+            "title": "Is Insulin Dependent",
+            "description": "Whether the patient uses insulin.",
+            "default": false
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes",
+            "description": "Additional clinical notes."
+          }
+        },
+        "type": "object",
+        "required": [
+          "mrn",
+          "full_name",
+          "date_of_birth",
+          "gender",
+          "diabetes_type"
+        ],
+        "title": "CreatePatientRequest",
+        "description": "POST /patients request body."
+      },
+      "CreatePatientResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "mrn": {
+            "type": "string",
+            "title": "Mrn"
+          },
+          "full_name": {
+            "type": "string",
+            "title": "Full Name"
+          },
+          "registered_by": {
+            "type": "string",
+            "title": "Registered By"
+          },
+          "clinic_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Clinic Name"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "mrn",
+          "full_name",
+          "registered_by",
+          "created_at"
+        ],
+        "title": "CreatePatientResponse",
+        "description": "POST /patients response body (201 Created)."
+      },
+      "CreateScreeningResponse": {
+        "properties": {
+          "screening_id": {
+            "type": "string",
+            "title": "Screening Id"
+          },
+          "retinal_image_id": {
+            "type": "string",
+            "title": "Retinal Image Id"
+          },
+          "eye": {
+            "type": "string",
+            "enum": [
+              "OD",
+              "OS"
+            ],
+            "title": "Eye"
+          },
+          "qc_assessment": {
+            "$ref": "#/components/schemas/QCAssessment"
+          },
+          "fundus_image_signed_url": {
+            "type": "string",
+            "title": "Fundus Image Signed Url",
+            "description": "30-minute signed URL for the stored fundus image."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "screening_id",
+          "retinal_image_id",
+          "eye",
+          "qc_assessment",
+          "fundus_image_signed_url",
+          "created_at"
+        ],
+        "title": "CreateScreeningResponse",
+        "description": "POST /screenings response body (201 Created)."
+      },
+      "ForgotPasswordRequest": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "email"
+        ],
+        "title": "ForgotPasswordRequest",
+        "description": "Request a recovery email without revealing whether the account exists."
+      },
+      "GradCAMExplanation": {
+        "properties": {
+          "target_layer": {
+            "type": "string",
+            "title": "Target Layer",
+            "description": "Model layer used for Grad-CAM (conv_head)."
+          },
+          "heatmap_signed_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Heatmap Signed Url",
+            "description": "30-minute signed URL when the overlay is stored."
+          },
+          "heatmap_base64": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Heatmap Base64",
+            "description": "Base64 PNG overlay for local or offline inference."
+          }
+        },
+        "type": "object",
+        "required": [
+          "target_layer"
+        ],
+        "title": "GradCAMExplanation",
+        "description": "Grad-CAM explainability metadata."
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "'healthy' when the service is operational."
+          },
+          "version": {
+            "type": "string",
+            "title": "Version",
+            "description": "Application version string."
+          },
+          "device": {
+            "type": "string",
+            "title": "Device",
+            "description": "Compute device used by the model (cpu / cuda)."
+          },
+          "model_loaded": {
+            "type": "boolean",
+            "title": "Model Loaded",
+            "description": "True when the model checkpoint was found on disk."
+          },
+          "database_connected": {
+            "type": "boolean",
+            "title": "Database Connected",
+            "description": "True when the Supabase connection is verified."
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Timestamp",
+            "description": "UTC timestamp of the health check."
+          },
+          "environment": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Environment",
+            "description": "Deployment environment name."
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "version",
+          "device",
+          "model_loaded",
+          "database_connected",
+          "timestamp"
+        ],
+        "title": "HealthResponse",
+        "description": "Response body for GET /api/v1/health.",
+        "example": {
+          "database_connected": false,
+          "device": "cpu",
+          "environment": "development",
+          "model_loaded": true,
+          "status": "healthy",
+          "timestamp": "2026-11-01T12:00:00Z",
+          "version": "1.0.0"
+        }
+      },
+      "LoginRequest": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email",
+            "description": "User email address."
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8,
+            "title": "Password",
+            "description": "Account password."
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "title": "LoginRequest",
+        "description": "POST /auth/login request body."
+      },
+      "LoginResponse": {
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "title": "Access Token",
+            "description": "Short-lived JWT access token."
+          },
+          "token_type": {
+            "type": "string",
+            "title": "Token Type",
+            "description": "Token type.",
+            "default": "bearer"
+          },
+          "expires_in": {
+            "type": "integer",
+            "title": "Expires In",
+            "description": "Token lifetime in seconds."
+          },
+          "user": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UserProfile"
+              }
+            ],
+            "description": "Authenticated user profile."
+          }
+        },
+        "type": "object",
+        "required": [
+          "access_token",
+          "expires_in",
+          "user"
+        ],
+        "title": "LoginResponse",
+        "description": "POST /auth/login response body."
+      },
+      "PatientDetailResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "patient_code": {
+            "type": "string",
+            "title": "Patient Code"
+          },
+          "full_name": {
+            "type": "string",
+            "title": "Full Name"
+          },
+          "date_of_birth": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date Of Birth"
+          },
+          "sex": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sex"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "medical_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Medical Notes"
+          },
+          "clinic_id": {
+            "type": "string",
+            "title": "Clinic Id"
+          },
+          "created_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          },
+          "diabetes_type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "type_1",
+                  "type_2",
+                  "gestational",
+                  "other"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Diabetes Type"
+          },
+          "diabetes_duration_years": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Diabetes Duration Years"
+          },
+          "latest_hba1c": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latest Hba1C"
+          },
+          "is_insulin_dependent": {
+            "type": "boolean",
+            "title": "Is Insulin Dependent",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "patient_code",
+          "full_name",
+          "clinic_id"
+        ],
+        "title": "PatientDetailResponse",
+        "description": "Clinic-scoped patient detail matching the existing live table columns."
+      },
+      "PatientListResponse": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total",
+            "description": "Total matching patients."
+          },
+          "page": {
+            "type": "integer",
+            "title": "Page"
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit"
+          },
+          "patients": {
+            "items": {
+              "$ref": "#/components/schemas/PatientSummary"
+            },
+            "type": "array",
+            "title": "Patients"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "page",
+          "limit",
+          "patients"
+        ],
+        "title": "PatientListResponse",
+        "description": "GET /patients paginated response body."
+      },
+      "PatientSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Patient UUID."
+          },
+          "patient_code": {
+            "type": "string",
+            "title": "Patient Code",
+            "description": "Clinic patient identifier."
+          },
+          "full_name": {
+            "type": "string",
+            "title": "Full Name"
+          },
+          "date_of_birth": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date Of Birth"
+          },
+          "sex": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sex"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "patient_code",
+          "full_name"
+        ],
+        "title": "PatientSummary",
+        "description": "Low-PII patient row matching the existing Supabase patients table."
+      },
+      "PredictResponse": {
+        "properties": {
+          "prediction_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prediction Id",
+            "description": "Database ID; null when persistence is not configured."
+          },
+          "retinal_image_id": {
+            "type": "string",
+            "title": "Retinal Image Id"
+          },
+          "predicted_grade": {
+            "type": "integer",
+            "maximum": 4.0,
+            "minimum": 0.0,
+            "title": "Predicted Grade",
+            "description": "DR severity grade (0\u20134)."
+          },
+          "severity_label": {
+            "type": "string",
+            "title": "Severity Label",
+            "description": "Human-readable severity label."
+          },
+          "confidence_score": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Confidence Score"
+          },
+          "is_referral_recommended": {
+            "type": "boolean",
+            "title": "Is Referral Recommended",
+            "description": "True when predicted_grade \u2265 2 (Moderate DR or worse)."
+          },
+          "probabilities": {
+            "items": {
+              "$ref": "#/components/schemas/ClassProbabilityResponse"
+            },
+            "type": "array",
+            "title": "Probabilities"
+          },
+          "explanation": {
+            "$ref": "#/components/schemas/GradCAMExplanation"
+          },
+          "inference_time_ms": {
+            "type": "number",
+            "title": "Inference Time Ms"
+          },
+          "persistence_status": {
+            "type": "string",
+            "enum": [
+              "persisted",
+              "not_configured"
+            ],
+            "title": "Persistence Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "retinal_image_id",
+          "predicted_grade",
+          "severity_label",
+          "confidence_score",
+          "is_referral_recommended",
+          "probabilities",
+          "explanation",
+          "inference_time_ms",
+          "persistence_status"
+        ],
+        "title": "PredictResponse",
+        "description": "POST /predict response body (200 OK)."
+      },
+      "QCAssessment": {
+        "properties": {
+          "is_gradable": {
+            "type": "boolean",
+            "title": "Is Gradable",
+            "description": "True if image meets diagnostic quality standards."
+          },
+          "blur_score": {
+            "type": "number",
+            "title": "Blur Score",
+            "description": "Laplacian variance blur score (higher = sharper)."
+          },
+          "illumination": {
+            "type": "string",
+            "title": "Illumination",
+            "description": "Illumination quality assessment."
+          },
+          "confidence": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Confidence",
+            "description": "QC confidence score."
+          }
+        },
+        "type": "object",
+        "required": [
+          "is_gradable",
+          "blur_score",
+          "illumination",
+          "confidence"
+        ],
+        "title": "QCAssessment",
+        "description": "Fundus image quality control result."
+      },
+      "ResetPasswordRequest": {
+        "properties": {
+          "token_hash": {
+            "type": "string",
+            "maxLength": 512,
+            "minLength": 16,
+            "title": "Token Hash"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 12,
+            "title": "Password"
+          },
+          "confirm_password": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 12,
+            "title": "Confirm Password"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "token_hash",
+          "password",
+          "confirm_password"
+        ],
+        "title": "ResetPasswordRequest",
+        "description": "One-time recovery proof and matching new password; never persisted locally."
+      },
+      "ReviewRequest": {
+        "properties": {
+          "overall_grade": {
+            "type": "integer",
+            "maximum": 4.0,
+            "minimum": 0.0,
+            "title": "Overall Grade",
+            "description": "Ophthalmologist's confirmed DR grade."
+          },
+          "grade_override": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 4.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Grade Override",
+            "description": "Override value if different from AI grade."
+          },
+          "ophthalmologist_notes": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 5000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ophthalmologist Notes"
+          },
+          "is_urgent_referral": {
+            "type": "boolean",
+            "title": "Is Urgent Referral",
+            "default": false
+          },
+          "is_signed_off": {
+            "type": "boolean",
+            "title": "Is Signed Off",
+            "description": "Set True to digitally sign the report.",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "overall_grade"
+        ],
+        "title": "ReviewRequest",
+        "description": "POST /screenings/{id}/review request body."
+      },
+      "SignupRequest": {
+        "properties": {
+          "full_name": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Full Name"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "phone": {
+            "type": "string",
+            "maxLength": 25,
+            "minLength": 7,
+            "title": "Phone"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 12,
+            "title": "Password"
+          },
+          "confirm_password": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 12,
+            "title": "Confirm Password"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "full_name",
+          "email",
+          "phone",
+          "password",
+          "confirm_password"
+        ],
+        "title": "SignupRequest",
+        "description": "Public registration accepts no role, status, or clinic assignment."
+      },
+      "SignupResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "email_confirmation_required"
+            ],
+            "title": "Status",
+            "default": "active"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "Account created successfully. You can now log in."
+          }
+        },
+        "type": "object",
+        "title": "SignupResponse",
+        "description": "Registration acknowledgement without tokens or provider metadata."
+      },
+      "UserProfile": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Supabase user UUID."
+          },
+          "email": {
+            "type": "string",
+            "title": "Email",
+            "description": "User email address."
+          },
+          "full_name": {
+            "type": "string",
+            "title": "Full Name",
+            "description": "Display name."
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "technician",
+              "ophthalmologist",
+              "administrator"
+            ],
+            "title": "Role",
+            "description": "RBAC role."
+          },
+          "clinic_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Clinic Name",
+            "description": "Affiliated clinic name."
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At",
+            "description": "Account creation timestamp."
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "email",
+          "full_name",
+          "role"
+        ],
+        "title": "UserProfile",
+        "description": "Embedded user profile in login and /auth/me responses."
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "description": "Enter your Supabase JWT access token. (If pasting directly into Swagger UI, do not type 'Bearer ', just paste the raw token).",
+        "scheme": "bearer"
+      }
+    }
+  }
+}

@@ -1,0 +1,524 @@
+{
+  "definitions": {
+    "clinics": {
+      "required": [
+        "id",
+        "clinic_name",
+        "is_active",
+        "created_at"
+      ],
+      "properties": {
+        "id": {
+          "default": "gen_random_uuid()",
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "uuid",
+          "type": "string"
+        },
+        "clinic_name": {
+          "format": "text",
+          "type": "string"
+        },
+        "address": {
+          "format": "text",
+          "type": "string"
+        },
+        "phone": {
+          "format": "text",
+          "type": "string"
+        },
+        "email": {
+          "format": "text",
+          "type": "string"
+        },
+        "is_active": {
+          "default": true,
+          "format": "boolean",
+          "type": "boolean"
+        },
+        "created_at": {
+          "default": "now()",
+          "format": "timestamp with time zone",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "reports": {
+      "required": [
+        "id",
+        "screening_id",
+        "review_status",
+        "created_at"
+      ],
+      "properties": {
+        "id": {
+          "default": "gen_random_uuid()",
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "uuid",
+          "type": "string"
+        },
+        "screening_id": {
+          "description": "Note:\nThis is a Foreign Key to `screenings.id`.<fk table='screenings' column='id'/>",
+          "format": "uuid",
+          "type": "string"
+        },
+        "prediction_id": {
+          "description": "Note:\nThis is a Foreign Key to `predictions.id`.<fk table='predictions' column='id'/>",
+          "format": "uuid",
+          "type": "string"
+        },
+        "reviewer_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "ai_summary": {
+          "format": "text",
+          "type": "string"
+        },
+        "clinical_assessment": {
+          "format": "text",
+          "type": "string"
+        },
+        "final_grade": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "review_status": {
+          "default": "pending",
+          "format": "text",
+          "type": "string"
+        },
+        "storage_bucket": {
+          "default": "clinical-reports",
+          "format": "text",
+          "type": "string"
+        },
+        "storage_path": {
+          "format": "text",
+          "type": "string"
+        },
+        "reviewed_at": {
+          "format": "timestamp with time zone",
+          "type": "string"
+        },
+        "created_at": {
+          "default": "now()",
+          "format": "timestamp with time zone",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "explanations": {
+      "required": [
+        "id",
+        "prediction_id",
+        "explanation_type",
+        "storage_bucket",
+        "storage_path",
+        "created_at"
+      ],
+      "properties": {
+        "id": {
+          "default": "gen_random_uuid()",
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "uuid",
+          "type": "string"
+        },
+        "prediction_id": {
+          "description": "Note:\nThis is a Foreign Key to `predictions.id`.<fk table='predictions' column='id'/>",
+          "format": "uuid",
+          "type": "string"
+        },
+        "explanation_type": {
+          "default": "Grad-CAM",
+          "format": "text",
+          "type": "string"
+        },
+        "storage_bucket": {
+          "default": "gradcam-heatmaps",
+          "format": "text",
+          "type": "string"
+        },
+        "storage_path": {
+          "format": "text",
+          "type": "string"
+        },
+        "target_layer": {
+          "format": "text",
+          "type": "string"
+        },
+        "created_at": {
+          "default": "now()",
+          "format": "timestamp with time zone",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "screenings": {
+      "required": [
+        "id",
+        "patient_id",
+        "screening_date",
+        "status",
+        "created_at",
+        "updated_at"
+      ],
+      "properties": {
+        "id": {
+          "default": "gen_random_uuid()",
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "uuid",
+          "type": "string"
+        },
+        "patient_id": {
+          "description": "Note:\nThis is a Foreign Key to `patients.id`.<fk table='patients' column='id'/>",
+          "format": "uuid",
+          "type": "string"
+        },
+        "technician_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "clinic_id": {
+          "description": "Note:\nThis is a Foreign Key to `clinics.id`.<fk table='clinics' column='id'/>",
+          "format": "uuid",
+          "type": "string"
+        },
+        "screening_date": {
+          "default": "now()",
+          "format": "timestamp with time zone",
+          "type": "string"
+        },
+        "status": {
+          "default": "pending",
+          "format": "text",
+          "type": "string"
+        },
+        "notes": {
+          "format": "text",
+          "type": "string"
+        },
+        "created_at": {
+          "default": "now()",
+          "format": "timestamp with time zone",
+          "type": "string"
+        },
+        "updated_at": {
+          "default": "now()",
+          "format": "timestamp with time zone",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "prediction_probabilities": {
+      "required": [
+        "id",
+        "prediction_id",
+        "dr_grade",
+        "probability"
+      ],
+      "properties": {
+        "id": {
+          "default": "gen_random_uuid()",
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "uuid",
+          "type": "string"
+        },
+        "prediction_id": {
+          "description": "Note:\nThis is a Foreign Key to `predictions.id`.<fk table='predictions' column='id'/>",
+          "format": "uuid",
+          "type": "string"
+        },
+        "dr_grade": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "probability": {
+          "format": "numeric",
+          "type": "number"
+        }
+      },
+      "type": "object"
+    },
+    "user_profiles": {
+      "required": [
+        "id",
+        "full_name",
+        "role",
+        "is_active",
+        "created_at",
+        "updated_at"
+      ],
+      "properties": {
+        "id": {
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "uuid",
+          "type": "string"
+        },
+        "full_name": {
+          "format": "text",
+          "type": "string"
+        },
+        "role": {
+          "format": "text",
+          "type": "string"
+        },
+        "clinic_id": {
+          "description": "Note:\nThis is a Foreign Key to `clinics.id`.<fk table='clinics' column='id'/>",
+          "format": "uuid",
+          "type": "string"
+        },
+        "phone": {
+          "format": "text",
+          "type": "string"
+        },
+        "is_active": {
+          "default": true,
+          "format": "boolean",
+          "type": "boolean"
+        },
+        "created_at": {
+          "default": "now()",
+          "format": "timestamp with time zone",
+          "type": "string"
+        },
+        "updated_at": {
+          "default": "now()",
+          "format": "timestamp with time zone",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "predictions": {
+      "required": [
+        "id",
+        "retinal_image_id",
+        "model_name",
+        "predicted_grade",
+        "confidence",
+        "referral_recommended",
+        "created_at"
+      ],
+      "properties": {
+        "id": {
+          "default": "gen_random_uuid()",
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "uuid",
+          "type": "string"
+        },
+        "retinal_image_id": {
+          "description": "Note:\nThis is a Foreign Key to `retinal_images.id`.<fk table='retinal_images' column='id'/>",
+          "format": "uuid",
+          "type": "string"
+        },
+        "model_name": {
+          "default": "EfficientNet-B3",
+          "format": "text",
+          "type": "string"
+        },
+        "model_version": {
+          "format": "text",
+          "type": "string"
+        },
+        "predicted_grade": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "confidence": {
+          "format": "numeric",
+          "type": "number"
+        },
+        "referral_recommended": {
+          "format": "boolean",
+          "type": "boolean"
+        },
+        "inference_time_ms": {
+          "format": "numeric",
+          "type": "number"
+        },
+        "created_at": {
+          "default": "now()",
+          "format": "timestamp with time zone",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "retinal_images": {
+      "required": [
+        "id",
+        "screening_id",
+        "eye_side",
+        "storage_bucket",
+        "storage_path",
+        "uploaded_at"
+      ],
+      "properties": {
+        "id": {
+          "default": "gen_random_uuid()",
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "uuid",
+          "type": "string"
+        },
+        "screening_id": {
+          "description": "Note:\nThis is a Foreign Key to `screenings.id`.<fk table='screenings' column='id'/>",
+          "format": "uuid",
+          "type": "string"
+        },
+        "eye_side": {
+          "format": "text",
+          "type": "string"
+        },
+        "storage_bucket": {
+          "default": "fundus-images",
+          "format": "text",
+          "type": "string"
+        },
+        "storage_path": {
+          "format": "text",
+          "type": "string"
+        },
+        "original_filename": {
+          "format": "text",
+          "type": "string"
+        },
+        "mime_type": {
+          "format": "text",
+          "type": "string"
+        },
+        "file_size_bytes": {
+          "format": "int64",
+          "type": "integer"
+        },
+        "image_width": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "image_height": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "uploaded_by": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "uploaded_at": {
+          "default": "now()",
+          "format": "timestamp with time zone",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "patients": {
+      "required": [
+        "id",
+        "patient_code",
+        "full_name",
+        "created_at",
+        "updated_at"
+      ],
+      "properties": {
+        "id": {
+          "default": "gen_random_uuid()",
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "uuid",
+          "type": "string"
+        },
+        "patient_code": {
+          "format": "text",
+          "type": "string"
+        },
+        "full_name": {
+          "format": "text",
+          "type": "string"
+        },
+        "date_of_birth": {
+          "format": "date",
+          "type": "string"
+        },
+        "sex": {
+          "format": "text",
+          "type": "string"
+        },
+        "phone": {
+          "format": "text",
+          "type": "string"
+        },
+        "email": {
+          "format": "text",
+          "type": "string"
+        },
+        "medical_notes": {
+          "format": "text",
+          "type": "string"
+        },
+        "clinic_id": {
+          "description": "Note:\nThis is a Foreign Key to `clinics.id`.<fk table='clinics' column='id'/>",
+          "format": "uuid",
+          "type": "string"
+        },
+        "created_by": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "created_at": {
+          "default": "now()",
+          "format": "timestamp with time zone",
+          "type": "string"
+        },
+        "updated_at": {
+          "default": "now()",
+          "format": "timestamp with time zone",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "audit_logs": {
+      "required": [
+        "id",
+        "action",
+        "details",
+        "created_at"
+      ],
+      "properties": {
+        "id": {
+          "default": "gen_random_uuid()",
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "uuid",
+          "type": "string"
+        },
+        "user_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "action": {
+          "format": "text",
+          "type": "string"
+        },
+        "table_name": {
+          "format": "text",
+          "type": "string"
+        },
+        "record_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "details": {
+          "format": "jsonb"
+        },
+        "created_at": {
+          "default": "now()",
+          "format": "timestamp with time zone",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  }
+}
